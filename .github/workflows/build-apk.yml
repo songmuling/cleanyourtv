@@ -1,7 +1,10 @@
 name: Build Launcher APK
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # 允许手动点按钮打包
+  push:               # 只要仓库有新代码提交（包括你点了 Sync fork 同步），自动打包
+    branches:
+      - main
 
 jobs:
   build:
