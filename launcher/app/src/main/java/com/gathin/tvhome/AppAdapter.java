@@ -221,15 +221,15 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         List<ResolveInfo> found = new ArrayList<>(pm.queryIntentActivities(probe, 0));
         Set<String> tvPackages = new HashSet<>();
         for (ResolveInfo ri : found) if (ri.activityInfo != null) tvPackages.add(ri.activityInfo.packageName);
-        leanbackPackages = tvPackages;
+        leanbackPackages = new HashSet<>(tvPackages);
         Set<String> added = LibraryApps.load(ctx);
         Set<String> removed = LibraryApps.loadRemoved(ctx);
-        if (!added.isEmpty()) {
-            Set<String> seen = new HashSet<>(tvPackages);
-            for (ResolveInfo ri : pm.queryIntentActivities(
-                    new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER), 0)) {
-                if (ri.activityInfo != null && added.contains(ri.activityInfo.packageName)
-                        && seen.add(ri.activityInfo.packageName)) found.add(ri);
+        Set<String> seenLauncher = new HashSet<>(tvPackages);
+        for (ResolveInfo ri : pm.queryIntentActivities(
+                new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER), 0)) {
+            if (ri.activityInfo != null && seenLauncher.add(ri.activityInfo.packageName)) {
+                found.add(ri);
+                tvPackages.add(ri.activityInfo.packageName);
             }
         }
         Map<String, Cards.Card> cardByPkg = new HashMap<>();

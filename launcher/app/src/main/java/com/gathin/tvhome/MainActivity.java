@@ -1690,6 +1690,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
      * On firmware with a standard settings handler the behaviour is unchanged.
      */
     private Intent systemIntent(String standardAction) {
+        if (android.provider.Settings.ACTION_SETTINGS.equals(standardAction)) {
+            Intent skyworth = new Intent().setComponent(new ComponentName(
+                    "com.skyworthdigital.settings", "com.skyworthdigital.settings.activity.MainActivity"));
+            if (skyworth.resolveActivity(getPackageManager()) != null) return skyworth;
+        }
         Intent i = new Intent(standardAction);
         if (i.resolveActivity(getPackageManager()) != null) return i;
         i = new Intent().setComponent(new ComponentName(
